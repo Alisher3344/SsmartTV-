@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120">
+  <!-- Ko'k fon -->
+  <rect width="280" height="120" fill="#2E5C9A"/>
+  
+  <!-- РОССИЯ matni -->
+  <text x="140" y="75" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="white" text-anchor="middle">РОССИЯ</text>
+  
+  <!-- Qizil fon -->
+  <rect x="280" width="120" height="120" fill="#DC143C"/>
+  
+  <!-- 1 raqami -->
+  <text x="340" y="85" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="white" text-anchor="middle">1</text>
+</svg>

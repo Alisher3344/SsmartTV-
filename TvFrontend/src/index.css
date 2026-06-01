@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-dark text-white;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-dark text-black font-semibold px-6 py-2 rounded-lg transition-all duration-300;
+  }
+  
+  .card {
+    @apply bg-dark-card rounded-xl overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer;
+  }
+  
+  .navbar-link {
+    @apply text-white hover:text-primary transition-colors duration-200 cursor-pointer text-sm font-medium;
+  }
+  
+  .navbar-link:hover {
+    text-shadow: 0 0 8px rgba(113, 0, 135, 0.6);
+  }
+  
+  .section-title {
+    @apply text-2xl font-bold mb-6 flex items-center gap-2;
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* Custom animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.5s ease-out;
+}
+
+/* Hero gradient */
+.hero-gradient {
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.9));
+}
+
+/* Hide scrollbar for carousel */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

@@ -1,0 +1,33 @@
+# SsmartTv local dev infra: PostgreSQL + Redis
+# Works with `docker compose up -d` or `podman-compose up -d`.
+services:
+  postgres:
+    image: docker.io/library/postgres:16
+    container_name: ssmart-postgres
+    environment:
+      POSTGRES_USER: ssmart
+      POSTGRES_PASSWORD: ssmart
+      POSTGRES_DB: ssmarttv
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ssmart -d ssmarttv"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: docker.io/library/redis:7
+    container_name: ssmart-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata: {}

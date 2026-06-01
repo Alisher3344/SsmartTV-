@@ -1,0 +1,30 @@
+#EXTM3U
+# Removed per request: Dunyo bo'ylab, Kinoteatr, Madaniyat va ma'rifat,
+# Milliy, O'zbekiston, O'zbekiston 24, Sevimli TV, Toshkent, UzReport TV, Yoshlar,
+# Zo'r TV, Renessans TV, Navo, Mahalla, Dasturxon TV
+#EXTINF:-1 tvg-id="Bolajon.uz@SD",Bolajon (576p)
+https://stream8.cinerama.uz/1007/playlist.m3u8
+#EXTINF:-1 tvg-id="BIZCinema.uz@SD",BIZ Cinema (1080p)
+https://fl.biztv.media/cinema_720_EMfSyXgoRdiIHgldXTZICucKTIeCKO/index.m3u8
+#EXTINF:-1 tvg-id="BIZMusic.uz@SD",BIZ Music (1080p)
+https://fl.biztv.media/music_720_QAKpGmVUjaPApCNjpsgBxrdqNihAkl/index.m3u8
+#EXTINF:-1 tvg-id="BIZTV.uz@SD",BIZ TV (1080p)
+https://fl.biztv.media/biz_tv_720_uni8jhub4h8fub4idejswh8dh3j94finbu4nidj39inwsj92in3d/index.m3u8
+#EXTINF:-1 tvg-id="FTV.uz@SD",FTV (576p)
+https://stream8.cinerama.uz/1018/playlist.m3u8
+#EXTINF:-1 tvg-id="MY5.uz@SD",MY5 (1080p)
+https://st.my5.media/hls/hd/index.m3u8
+#EXTINF:-1 tvg-id="OzbekistonTarixi.uz@SD",O'zbekiston Tarixi (1080p)
+https://stream8.cinerama.uz/1209/tracks-v1a1/playlist.m3u8
+#EXTINF:-1 tvg-id="Qaraqalpaqstan.uz@SD",Qaraqalpaqstan (720p)
+https://stream8.cinerama.uz/1467/playlist.m3u8
+#EXTINF:-1 tvg-id="MakonTV.uz@SD",Makon TV (576i)
+https://stream8.cinerama.uz/1497/tracks-v1a1/mono.m3u8
+#EXTINF:-1 tvg-id="NavoiyMTRK.uz@SD",Navoiy MTRK (576i)
+https://stream8.cinerama.uz/1460/tracks-v1a1/mono.m3u8
+#EXTINF:-1 tvg-id="BuxoroMTRK.uz@SD",Buxoro MTRK (720p)
+https://stream8.cinerama.uz/1459/tracks-v1a1/mono.m3u8
+#EXTINF:-1 tvg-id="FargonaMTRK.uz@SD",Farg'ona MTRK
+https://stream8.cinerama.uz/1458/tracks-v1a1/mono.m3u8
+#EXTINF:-1 tvg-id="AndijonMTRK.uz@SD",Andijon MTRK (576i)
+https://stream8.cinerama.uz/1457/tracks-v1a1/mono.m3u8

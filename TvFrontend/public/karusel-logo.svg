@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120">
+  <!-- Pushti fon -->
+  <rect width="400" height="120" fill="#FF6B9D"/>
+  
+  <!-- КАРУСЕЛЬ matni -->
+  <text x="200" y="75" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="white" text-anchor="middle">КАРУСЕЛЬ</text>
+</svg>

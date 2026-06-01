@@ -1,0 +1,14 @@
+#EXTM3U
+# Faqat ishlaydigan oqimlar qoldirildi (2026-06-01 tekshiruvi).
+# Olib tashlangan (ishlamaydi): Беларусь 2 (SSL eof), Беларусь 3 ([Not 24/7], SSL eof),
+# ОНТ (HTTP 404), Первый Музыкальный Канал Россия (HTTP 403).
+#EXTINF:-1 tvg-id="Belarus5.by@SD",Беларусь 5 (1080p)
+https://ngtrk.dc.beltelecom.by/ngtrk/smil:belarus5.smil/playlist.m3u8
+#EXTINF:-1 tvg-id="Belarus24.by@SD",Беларусь 24 (1080p)
+https://ngtrk.dc.beltelecom.by/ngtrk/smil:belarus24.smil/playlist.m3u8
+#EXTINF:-1 tvg-id="PerviyInformationniy.by@SD",Первый информационный (1080p)
+https://ngtrk.dc.beltelecom.by/ngtrk/smil:informacionnyy.smil/playlist.m3u8
+#EXTINF:-1 tvg-id="FirstMusicChannel.by@SD",Первый Музыкальный Канал (576p)
+http://hz1.teleport.cc/HLS/SD.m3u8
+#EXTINF:-1 tvg-id="STV.by@SD",СТБ (720p)
+https://ctv.dc.beltelecom.by/ctv/ctv.stream/playlist.m3u8
