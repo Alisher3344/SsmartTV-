@@ -1,9 +1,18 @@
 import React, { useEffect, useRef } from 'react';
 import Hls from 'hls.js';
+import { useStore } from '../store/useStore';
 
 const VideoPlayer = ({ src, poster, onClose }) => {
   const videoRef = useRef(null);
   const hlsRef = useRef(null);
+  const setPlayerOpen = useStore((s) => s.setPlayerOpen);
+
+  // Player ochiq bo'lganda suzuvchi tugmalarni (MastersFab) yashiramiz,
+  // yopilganda yana ko'rsatamiz.
+  useEffect(() => {
+    setPlayerOpen(true);
+    return () => setPlayerOpen(false);
+  }, [setPlayerOpen]);
 
   useEffect(() => {
     console.log('VideoPlayer mounted, src:', src);
@@ -13,9 +22,11 @@ const VideoPlayer = ({ src, poster, onClose }) => {
       return;
     }
 
-    // M3U8 stream uchun HLS.js ishlatish
-    if (src.includes('.m3u8')) {
-      console.log('M3U8 detected, using HLS.js');
+    // HLS stream uchun HLS.js ishlatish. Backend proxy URL'i (/api/v1/stream/{slug})
+    // .m3u8 kengaytmasiz keladi, shuning uchun /stream/ ni ham HLS deb hisoblaymiz.
+    const isHls = src.includes('.m3u8') || src.includes('/stream/');
+    if (isHls) {
+      console.log('HLS stream detected, using HLS.js');
       if (Hls.isSupported()) {
         console.log('HLS.js is supported');
         const hls = new Hls({

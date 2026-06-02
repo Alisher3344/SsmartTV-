@@ -8,6 +8,7 @@ export const ru = {
       films: "Фильмы",
       series: "Сериалы",
       kids: "Детям",
+      masters: "Мастера",
     },
     
     // Hero section
@@ -24,8 +25,17 @@ export const ru = {
       premieres: "Самые ожидаемые премьеры",
       dubbed: "Сериалы с узбекским дубляжом",
       viewAll: "Показать больше",
+      comingSoonRow: "Фильмы и сериалы",
     },
-    
+
+    // Состояние "Скоро"
+    comingSoon: {
+      badge: "В разработке",
+      title: "Скоро",
+      subtitle: "Этот раздел в разработке. Скоро здесь появится контент.",
+      back: "Вернуться на главную",
+    },
+
     // Footer
     footer: {
       about: "О нас",

@@ -3,33 +3,94 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
     @apply bg-dark text-white;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     margin: 0;
     padding: 0;
+    /* Kichik ekranlarda gorizontal scroll bo'lmasin */
+    overflow-x: hidden;
+  }
+
+  /* Klaviatura bilan harakatlanishda ko'rinadigan focus ring */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary/60 ring-offset-2 ring-offset-dark rounded;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-primary hover:bg-primary-dark text-black font-semibold px-6 py-2 rounded-lg transition-all duration-300;
+    @apply bg-primary hover:bg-primary-dark text-white font-semibold px-5 py-2.5 rounded-lg
+      min-h-touch inline-flex items-center justify-center gap-2
+      shadow-glow-sm hover:shadow-glow active:scale-95
+      transition-all duration-300;
   }
-  
+
   .card {
-    @apply bg-dark-card rounded-xl overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer;
+    @apply bg-dark-card rounded-xl overflow-hidden cursor-pointer
+      shadow-card will-change-transform
+      transition-all duration-300 sm:hover:scale-105 hover:shadow-glow;
   }
-  
+
   .navbar-link {
     @apply text-white hover:text-primary transition-colors duration-200 cursor-pointer text-sm font-medium;
   }
-  
+
   .navbar-link:hover {
     text-shadow: 0 0 8px rgba(113, 0, 135, 0.6);
   }
-  
+
   .section-title {
-    @apply text-2xl font-bold mb-6 flex items-center gap-2;
+    @apply text-fluid-h2 font-bold mb-6 flex items-center gap-2;
+  }
+
+  /* Sahifa konteyneri — bitta manbadan kenglik/padding */
+  .page-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Touch uchun minimal 44x44px tegish zonasi */
+  .tap-target {
+    @apply min-h-touch min-w-touch flex items-center justify-center;
+  }
+
+  /* Glassmorphism karta */
+  .glass-card {
+    @apply bg-dark-card/70 backdrop-blur-xl border border-white/5 shadow-card;
+  }
+
+  /* Gradient matn */
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400;
+  }
+
+  .gradient-text-brand {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-light to-secondary;
+  }
+
+  /* Hover'da glow effekti */
+  .glow-hover {
+    @apply transition-all duration-300 hover:shadow-glow;
+  }
+
+  /* Skeleton loader (shimmer) */
+  .skeleton {
+    @apply relative overflow-hidden bg-dark-card;
+  }
+
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0 animate-shimmer -translate-x-full;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.06),
+      transparent
+    );
   }
 }
 
@@ -40,16 +101,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: #141414;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333;
+  background: linear-gradient(#444, #555);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #444;
+  background: linear-gradient(#555, #666);
 }
 
 /* Custom animations */
@@ -70,7 +131,7 @@
 
 /* Hero gradient */
 .hero-gradient {
-  background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.9));
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.55) 55%, rgba(10,10,10,0.95));
 }
 
 /* Hide scrollbar for carousel */

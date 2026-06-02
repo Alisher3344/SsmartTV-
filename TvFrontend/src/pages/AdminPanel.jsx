@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useStore } from '../store/useStore';
 import apiClient from '../api/client';
 import imageToDataUrl from '../utils/imageToDataUrl';
-import { LogOut, Pencil, Trash2, Plus, Loader2 } from 'lucide-react';
+import { LogOut, Pencil, Trash2, Plus, Loader2, UserPlus, ShieldCheck } from 'lucide-react';
+
+// Rolga asoslangan ruxsat tekshiruvi (backend UserOut'da `is_admin` yo'q — `role` bor).
+const STAFF_ROLES = ['superuser', 'admin', 'staff'];
+const isStaff = (u) => STAFF_ROLES.includes(u?.role);
+const isSuperuser = (u) => u?.role === 'superuser';
 
 // Asosiy kategoriya = davlat
 const COUNTRIES = ['ozbekiston', 'rossiya', 'belarus'];
@@ -43,10 +48,6 @@ const EMPTY_FORM = {
   video_url: '',
   is_live: false,
   logo: '',
-  current_show: '',
-  time: '',
-  description_uz: '',
-  description_ru: '',
   sort_order: 0,
 };
 
@@ -64,7 +65,7 @@ function LoginForm({ notAdmin }) {
     setBusy(true);
     try {
       const user = await login(loginValue, password);
-      if (!user?.is_admin) {
+      if (!isStaff(user)) {
         setError("Bu hisobda admin huquqi yo'q.");
       }
     } catch {
@@ -181,10 +182,6 @@ function ChannelForm({ editing, onDone, onCancel }) {
       is_live: form.is_live,
       logo: form.logo || null,
       image: form.logo || null,
-      current_show: form.current_show || null,
-      time: form.time || null,
-      description_uz: form.description_uz || null,
-      description_ru: form.description_ru || null,
       sort_order: Number(form.sort_order) || 0,
     };
     try {
@@ -285,46 +282,6 @@ function ChannelForm({ editing, onDone, onCancel }) {
           />
         </div>
         <div>
-          <label className="block text-sm text-gray-400 mb-1">
-            Hozir efirda
-          </label>
-          <input
-            className={field}
-            value={form.current_show}
-            onChange={(e) => set('current_show', e.target.value)}
-            placeholder="Multfilm"
-          />
-        </div>
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Vaqt</label>
-          <input
-            className={field}
-            value={form.time}
-            onChange={(e) => set('time', e.target.value)}
-            placeholder="18:00 - 19:00"
-          />
-        </div>
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">
-            Tavsif (UZ)
-          </label>
-          <input
-            className={field}
-            value={form.description_uz}
-            onChange={(e) => set('description_uz', e.target.value)}
-          />
-        </div>
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">
-            Tavsif (RU)
-          </label>
-          <input
-            className={field}
-            value={form.description_ru}
-            onChange={(e) => set('description_ru', e.target.value)}
-          />
-        </div>
-        <div>
           <label className="block text-sm text-gray-400 mb-1">Tartib raqami</label>
           <input
             type="number"
@@ -388,6 +345,178 @@ function ChannelForm({ editing, onDone, onCancel }) {
   );
 }
 
+// ---- Adminlar (superuser) ------------------------------------------------
+// Superuser admin/staff login-parol yaratadi. Backend: /api/v1/staff/accounts
+// (ACCOUNT_MANAGE — faqat superuser). Frontend /api/... ni chaqiradi, nginx
+// uni /api/v1/... ga rewrite qiladi.
+function AccountsManager() {
+  const [accounts, setAccounts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [form, setForm] = useState({ username: '', password: '', full_name: '', role: 'admin' });
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  const load = async () => {
+    try {
+      const { data } = await apiClient.get('/api/staff/accounts');
+      // Backend paginatsiyalangan ({items,total,...}) yoki massiv qaytarishi mumkin
+      setAccounts(Array.isArray(data) ? data : (data?.items ?? []));
+    } catch {
+      setAccounts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  const set = (key, value) => setForm((f) => ({ ...f, [key]: value }));
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setError('');
+    if (form.username.trim().length < 3) return setError('Login kamida 3 belgi.');
+    if (form.password.length < 8) return setError('Parol kamida 8 belgi.');
+    setBusy(true);
+    try {
+      await apiClient.post('/api/staff/accounts', {
+        username: form.username.trim(),
+        password: form.password,
+        role: form.role,
+        full_name: form.full_name.trim() || null,
+      });
+      setForm({ username: '', password: '', full_name: '', role: 'admin' });
+      load();
+    } catch (err) {
+      const status = err?.response?.status;
+      if (status === 409) setError('Bu login allaqachon mavjud.');
+      else if (status === 422) setError("Ma'lumotlar noto'g'ri (login ≥3, parol ≥8).");
+      else if (status === 401 || status === 403) setError('Ruxsat yo\'q (superuser kerak).');
+      else setError('Yaratishda xatolik yuz berdi.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const onDelete = async (acc) => {
+    if (!window.confirm(`"${acc.username}" hisobini o'chirilsinmi?`)) return;
+    try {
+      await apiClient.delete(`/api/staff/accounts/${acc.id}`);
+      load();
+    } catch {
+      window.alert("O'chirishda xatolik (superuser hisobini o'chirib bo'lmaydi).");
+    }
+  };
+
+  const field =
+    'w-full bg-dark border border-gray-700 rounded-lg px-3 py-2 text-white placeholder-gray-600 focus:outline-none focus:border-primary';
+
+  return (
+    <div className="bg-dark-card border border-gray-800 rounded-2xl p-6 space-y-5">
+      <h2 className="text-lg font-semibold flex items-center gap-2">
+        <ShieldCheck size={18} /> Adminlar (login-parol)
+      </h2>
+
+      <form onSubmit={submit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">Login *</label>
+          <input
+            className={field}
+            value={form.username}
+            onChange={(e) => set('username', e.target.value)}
+            placeholder="admin1"
+            autoComplete="off"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">Parol * (≥8)</label>
+          <input
+            type="password"
+            className={field}
+            value={form.password}
+            onChange={(e) => set('password', e.target.value)}
+            placeholder="••••••••"
+            autoComplete="new-password"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">F.I.O.</label>
+          <input
+            className={field}
+            value={form.full_name}
+            onChange={(e) => set('full_name', e.target.value)}
+            placeholder="Ism Familiya"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">Rol</label>
+          <select
+            className={field}
+            value={form.role}
+            onChange={(e) => set('role', e.target.value)}
+          >
+            <option value="admin">admin</option>
+            <option value="staff">staff</option>
+          </select>
+        </div>
+
+        {error && <div className="sm:col-span-2 text-sm text-red-400">{error}</div>}
+
+        <div className="sm:col-span-2">
+          <button
+            type="submit"
+            disabled={busy}
+            className="btn-primary flex items-center gap-2 disabled:opacity-60"
+          >
+            {busy ? <Loader2 size={18} className="animate-spin" /> : <UserPlus size={18} />}
+            Admin yaratish
+          </button>
+        </div>
+      </form>
+
+      <div className="border-t border-gray-800 pt-4">
+        {loading ? (
+          <div className="py-6 flex justify-center">
+            <Loader2 className="animate-spin text-gray-500" />
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-800">
+            {accounts.map((a) => (
+              <div key={a.id} className="flex items-center gap-4 py-3">
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium truncate">
+                    {a.username}
+                    {a.full_name ? <span className="text-gray-500"> · {a.full_name}</span> : null}
+                  </div>
+                  <div className="text-xs text-gray-500">{a.role}</div>
+                </div>
+                {a.role === 'superuser' ? (
+                  <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">
+                    superuser
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => onDelete(a)}
+                    className="p-2 rounded-lg text-gray-400 hover:text-red-400 hover:bg-gray-800"
+                    title="O'chirish"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                )}
+              </div>
+            ))}
+            {accounts.length === 0 && (
+              <div className="py-6 text-center text-gray-500">Hisoblar yo'q</div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ---- Dashboard -----------------------------------------------------------
 function Dashboard() {
   const { user, logout } = useStore();
@@ -398,8 +527,9 @@ function Dashboard() {
   // Reload helper used by event handlers (after create/edit/delete).
   const load = async () => {
     try {
-      const { data } = await apiClient.get('/api/channels');
-      setChannels(data);
+      const { data } = await apiClient.get('/api/channels?limit=100');
+      // Backend paginatsiyalangan ({items,total,...}) shaklini massivga keltiramiz
+      setChannels(Array.isArray(data) ? data : (data?.items ?? []));
     } catch {
       setChannels([]);
     }
@@ -409,8 +539,8 @@ function Dashboard() {
   useEffect(() => {
     let active = true;
     apiClient
-      .get('/api/channels')
-      .then(({ data }) => active && setChannels(data))
+      .get('/api/channels?limit=100')
+      .then(({ data }) => active && setChannels(Array.isArray(data) ? data : (data?.items ?? [])))
       .catch(() => active && setChannels([]))
       .finally(() => active && setLoading(false));
     return () => {
@@ -450,6 +580,8 @@ function Dashboard() {
           Chiqish
         </button>
       </div>
+
+      {isSuperuser(user) && <AccountsManager />}
 
       <ChannelForm
         key={editing?.slug || 'new'}
@@ -534,6 +666,6 @@ export default function AdminPanel() {
   }
 
   if (!user) return <LoginForm />;
-  if (!user.is_admin) return <LoginForm notAdmin />;
+  if (!isStaff(user)) return <LoginForm notAdmin />;
   return <Dashboard />;
 }

@@ -1,0 +1,30 @@
+FROM node:20-alpine AS builder
+
+WORKDIR /build
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY . .
+
+# Same-origin: API ssmart-tv.ssmart.uz/api orqali (asosiy nginx /api -> tv-api)
+ARG VITE_API_URL=https://ssmart-tv.ssmart.uz
+ENV VITE_API_URL=$VITE_API_URL
+
+RUN npm run build
+
+
+FROM nginx:1.27-alpine AS runtime
+
+RUN rm -rf /usr/share/nginx/html/*
+
+COPY --from=builder /build/dist /usr/share/nginx/html
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget -qO- http://127.0.0.1/ >/dev/null || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]

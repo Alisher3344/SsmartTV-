@@ -21,13 +21,32 @@ const TVChannels = () => {
 
   useEffect(() => {
     let active = true;
-    apiClient
-      .get('/api/channels')
-      .then(({ data }) => {
+    // Backend limiti 100 — barcha kanallarni olish uchun sahifalab yuklaymiz
+    // (davlatlar ko'paygani sayin jami 100 dan oshadi).
+    const fetchAll = async () => {
+      const pageSize = 100;
+      let offset = 0;
+      let all = [];
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { data } = await apiClient.get(
+          `/api/v1/channels?limit=${pageSize}&offset=${offset}`
+        );
+        const items = Array.isArray(data) ? data : (data?.items ?? []);
+        all = all.concat(items);
+        const total = data?.total ?? all.length;
+        if (items.length === 0 || all.length >= total) break;
+        offset += pageSize;
+      }
+      return all;
+    };
+
+    fetchAll()
+      .then((list) => {
         if (!active) return;
         // Backend maydonlarini komponent kutgan shaklga moslash
         setChannels(
-          data.map((c) => ({
+          list.map((c) => ({
             id: c.slug,
             name: c.name,
             logo: c.logo,
@@ -35,9 +54,14 @@ const TVChannels = () => {
             time: c.time,
             description: { uz: c.description_uz, ru: c.description_ru },
             image: c.image,
-            category: c.category, // davlat
-            subcategory: c.subcategory, // janr
-            videoUrl: c.stream_url ? absoluteUrl(c.stream_url) : null,
+            // Backend country/genre obyekt sifatida qaytaradi (slug bo'yicha filter)
+            category: c.country?.slug, // davlat: ozbekiston/rossiya/usa/turkiya/...
+            subcategory: c.genre?.slug, // janr
+            country: c.country, // {slug, name_uz, name_ru, ...} — kartochkada ko'rsatish uchun
+            genre: c.genre, // {slug, name_uz, name_ru, ...}
+            // Live kanal uchun backend proxy URL beradi: /api/v1/stream/{slug}.
+            // stream_url public javobda yashirilgan, shuning uchun playback_url'dan olamiz.
+            videoUrl: c.playback_url ? absoluteUrl(c.playback_url) : null,
           }))
         );
       })
@@ -52,6 +76,9 @@ const TVChannels = () => {
   const countries = [
     { id: 'ozbekiston', label: { uz: "O'zbekiston", ru: 'Узбекистан' } },
     { id: 'rossiya', label: { uz: 'Rossiya', ru: 'Россия' } },
+    { id: 'usa', label: { uz: 'AQSH', ru: 'США' } },
+    { id: 'turkiya', label: { uz: 'Turkiya', ru: 'Турция' } },
+    { id: 'qozogiston', label: { uz: "Qozog'iston", ru: 'Казахстан' } },
     { id: 'belarus', label: { uz: 'Belarus', ru: 'Беларусь' } },
   ];
 
@@ -280,43 +307,38 @@ const TVChannels = () => {
                 openChannel(channel);
               }}
             >
-              {/* Channel Logo */}
-              <div className="bg-dark-card rounded-lg p-4 mb-3 flex items-center gap-3 group-hover:bg-gray-800 transition-colors">
-                <img src={channel.logo} alt={channel.name} className="w-16 h-12 object-contain" />
-                <div className="flex-1">
-                  <h3 className="font-semibold">{channel.name}</h3>
+              {/* Channel card: logo (yoki nom) + jonli efir belgisi */}
+              <div className="bg-dark-card rounded-lg group-hover:bg-gray-800 transition-colors overflow-hidden">
+                <div className="relative h-32 flex items-center justify-center p-4">
+                  {channel.country && (
+                    <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-black/60 text-[11px] font-medium text-gray-200">
+                      {currentLang === 'ru'
+                        ? channel.country.name_ru
+                        : channel.country.name_uz}
+                    </span>
+                  )}
+                  {channel.logo ? (
+                    <img
+                      src={channel.logo}
+                      alt={channel.name}
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  ) : (
+                    <span className="text-center text-lg font-bold text-white">
+                      {channel.name}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center justify-between px-4 py-3 border-t border-gray-800">
+                  <h3 className="font-semibold truncate">{channel.name}</h3>
                   {channel.videoUrl && (
-                    <span className="text-xs text-primary">● Jonli efir</span>
+                    <span className="ml-2 flex-shrink-0 flex items-center gap-1 text-xs text-primary">
+                      <span className="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+                      {currentLang === 'uz' ? 'Jonli' : 'Эфир'}
+                    </span>
                   )}
                 </div>
               </div>
-              
-              {/* Current Show */}
-              <div className="relative rounded-lg overflow-hidden mb-3">
-                <img 
-                  src={channel.image} 
-                  alt={channel.currentShow}
-                  className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-                    <span className="text-xs text-gray-300">{channel.time}</span>
-                  </div>
-                  <h4 className="font-semibold text-sm">{channel.currentShow}</h4>
-                </div>
-              </div>
-              
-              {/* Next Show */}
-              <p className="text-sm text-gray-400">{channel.description[currentLang]}</p>
-              
-              {/* Dastur jadvali button */}
-              <button className="mt-3 text-sm text-primary hover:text-primary-dark transition-colors flex items-center gap-1">
-                {currentLang === 'uz' ? 'Dastur jadvali' : 'Программа'}
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-                  <path d="M4 2l4 4-4 4" stroke="currentColor" strokeWidth="2" fill="none"/>
-                </svg>
-              </button>
             </div>
           ))}
         </div>

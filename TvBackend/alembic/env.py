@@ -4,13 +4,12 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from app.core.config import settings
-from app.db.base import Base
+from ssmarttv.core.config import settings
+from ssmarttv.db.base import Base
 
-# Import models so their tables register on Base.metadata for autogenerate.
-from app.models import channel, movie, user  # noqa: F401
+# Import every model module so all tables register on Base.metadata.
+import ssmarttv.db.all_models  # noqa: F401
 
-# Alembic Config object.
 config = context.config
 
 if config.config_file_name is not None:

@@ -8,6 +8,7 @@ export const uz = {
       films: "Filmlar",
       series: "Seriallar",
       kids: "Bolalar uchun",
+      masters: "Ustalar",
     },
     
     // Hero section
@@ -24,8 +25,17 @@ export const uz = {
       premieres: "Eng kutilgan premyeralar",
       dubbed: "O'zbek dublyajidagi seriallar",
       viewAll: "Ko'proq ko'rsatish",
+      comingSoonRow: "Filmlar va seriallar",
     },
-    
+
+    // "Tez kunda" holati
+    comingSoon: {
+      badge: "Tayyorlanmoqda",
+      title: "Tez kunda",
+      subtitle: "Bu bo'lim ustida ishlanmoqda. Tez orada bu yerda kontent paydo bo'ladi.",
+      back: "Bosh sahifaga qaytish",
+    },
+
     // Footer
     footer: {
       about: "Biz haqimizda",

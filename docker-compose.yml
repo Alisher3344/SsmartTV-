@@ -3,7 +3,7 @@
 services:
   postgres:
     image: docker.io/library/postgres:16
-    container_name: ssmart-postgres
+    container_name: ssmarttv-postgres
     environment:
       POSTGRES_USER: ssmart
       POSTGRES_PASSWORD: ssmart
@@ -20,7 +20,7 @@ services:
 
   redis:
     image: docker.io/library/redis:7
-    container_name: ssmart-redis
+    container_name: ssmarttv-redis
     ports:
       - "6379:6379"
     healthcheck:
@@ -28,6 +28,24 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  api:
+    build:
+      context: ./TvBackend
+    container_name: ssmarttv-api
+    environment:
+      ENVIRONMENT: development
+      DATABASE_URL: postgresql+asyncpg://ssmart:ssmart@postgres:5432/ssmarttv
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: change-me-dev-secret
+      CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
 volumes:
   pgdata: {}

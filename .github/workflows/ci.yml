@@ -1,0 +1,61 @@
+name: backend-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+defaults:
+  run:
+    working-directory: TvBackend
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ssmart
+          POSTGRES_PASSWORD: ssmart
+          POSTGRES_DB: ssmarttv_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ssmart -d ssmarttv_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://ssmart:ssmart@localhost:5432/ssmarttv_test
+      REDIS_URL: redis://localhost:6379/15
+      SECRET_KEY: ci-secret-key
+      ENVIRONMENT: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: TvBackend/pyproject.toml
+
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      - name: Lint (ruff)
+        run: ruff check src scripts tests
+
+      - name: Type-check (mypy)
+        run: mypy src
+
+      - name: Test (pytest)
+        run: pytest -q

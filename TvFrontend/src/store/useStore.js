@@ -14,6 +14,10 @@ export const useStore = create((set) => ({
   authLoading: true,
   setUser: (user) => set({ user }),
 
+  // Video player ochiqmi — ochiq paytda suzuvchi tugmalar (MastersFab) yashiriladi
+  playerOpen: false,
+  setPlayerOpen: (open) => set({ playerOpen: open }),
+
   // Joriy sessiyani backend'dan tekshirish (cookie orqali)
   fetchMe: async () => {
     try {
@@ -35,9 +39,9 @@ export const useStore = create((set) => ({
     return data;
   },
 
-  // Kirish
-  login: async (email, password) => {
-    const { data } = await apiClient.post('/api/auth/login', { email, password });
+  // Kirish (staff/admin/superuser — username + parol)
+  login: async (username, password) => {
+    const { data } = await apiClient.post('/api/auth/staff/login', { username, password });
     set({ user: data });
     return data;
   },

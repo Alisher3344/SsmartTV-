@@ -1,76 +1,56 @@
 # SsmartTv
 
-IPTV / TV streaming platform. The repo is split into two apps:
+IPTV + VOD streaming platform. The repo is split into two apps:
 
 ```
 SsmartTv/
-├── TvFrontend/    # React 19 + Vite SPA (UI, HLS player, i18n uz/ru)
-├── TvBackend/     # FastAPI: auth, channels/movies API, HLS proxy
-├── docker-compose.yml   # PostgreSQL + Redis (dev infra)
-└── docs/          # CORS / deploy / Russia1 guides
+├── TvBackend/          # FastAPI: phone/OTP auth, RBAC, catalog, channels,
+│                       #   premium gating, HLS proxy, engagement (see its README)
+├── TvFrontend/         # React 19 + Vite SPA (UI, HLS player, i18n uz/ru)
+├── docker-compose.yml  # PostgreSQL + Redis + the API service
+└── .github/workflows/  # CI: ruff + mypy + pytest
 ```
 
-## Stack
+> The backend was re-architected to a senior-level, domain-driven FastAPI app
+> (`src/ssmarttv`, RBAC, phone+OTP, premium content). The frontend still calls
+> the old endpoints and will be reconnected to `/api/v1` in a follow-up.
 
-**Frontend:** React 19, Vite, React Router, Zustand, i18next, hls.js, Tailwind, axios.
+## Backend stack
 
-**Backend:** FastAPI · async SQLAlchemy 2.0 + asyncpg · Alembic (migrations) ·
-PostgreSQL · Redis (sessions) · Argon2 (`argon2-cffi`, password hashing) · httpx (HLS proxy).
+FastAPI · async SQLAlchemy 2.0 + asyncpg · Alembic · PostgreSQL · Redis ·
+Argon2 (staff passwords) · eskiz.uz (SMS OTP) · httpx (HLS proxy). Fully typed
+(mypy), linted (ruff), tested (pytest).
 
-Auth uses **opaque session ids stored in Redis** behind an HttpOnly cookie
-(`ssmart_session`). The HLS CORS proxy (formerly the Node `proxy-server.cjs`)
-is now part of the FastAPI backend under `/api/stream/{slug}` + `/api/segment`.
+**Auth:** regular users sign in with **phone + OTP** (60-day sessions);
+staff/admin/superuser with **username + password** (7-day sessions). Sessions
+are opaque ids in Redis behind an HttpOnly cookie, with multi-device listing and
+"log out everywhere". RBAC (Role + Permission) is DB-driven.
+
+**Access tiers:** every channel/movie/series/episode is `free` or `premium`.
+Browsing is open to all; free content plays without auth, premium needs auth +
+entitlement (granted by a superuser — payment is deferred).
 
 ## Quick start
 
-### 1. Infra (PostgreSQL + Redis)
-
 ```bash
-docker compose up -d      # or: podman-compose up -d
-```
+# 1. Infra
+docker compose up -d postgres redis
 
-### 2. Backend (port 8000)
-
-```bash
+# 2. Backend (see TvBackend/README.md for details)
 cd TvBackend
-python3.12 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env                # adjust if needed
-alembic upgrade head                # create tables
-python -m app.seed                  # load Russian channels + movies
-python -m app.import_m3u data/uzbek-channels.m3u   # import Uzbek TV channels
-uvicorn app.main:app --reload --port 8000
+make install && cp .env.example .env
+make migrate && make seed
+make superuser u=admin p='your-password'
+make run                     # http://localhost:8000  (/docs, /health)
+
+# …or run the whole API in a container:
+cd .. && docker compose up -d api
 ```
 
-Health check: <http://localhost:8000/health> · API docs: <http://localhost:8000/docs>
-
-### 3. Frontend (port 5173)
+## Tests & quality
 
 ```bash
-cd TvFrontend
-npm install
-cp .env.example .env                 # VITE_API_URL=http://localhost:8000
-npm run dev
+cd TvBackend && make check   # ruff + mypy + pytest
 ```
 
-Open <http://localhost:5173>.
-
-## API overview
-
-| Method | Path | Notes |
-|--------|------|-------|
-| POST | `/api/auth/register` | email + password (Argon2), sets session cookie |
-| POST | `/api/auth/login` | sets session cookie |
-| POST | `/api/auth/logout` | clears session (Redis + cookie) |
-| GET  | `/api/auth/me` | current user from session |
-| GET  | `/api/channels` | `?category=`, `?q=`, `?live_only=` |
-| GET  | `/api/channels/{slug}` | single channel (live → `stream_url`) |
-| POST/PUT/DELETE | `/api/channels` | admin only |
-| GET  | `/api/movies` | `?kind=hero\|featured\|premiere\|cinema\|movie\|series` |
-| GET  | `/api/stream/{slug}` | proxied HLS manifest |
-| GET  | `/api/segment?url=...` | proxied HLS segment |
-# SsmartTV-
-# SsmartTV-
-# SsmartTV-
-# SsmartTV-
-# SsmartTV-
+CI runs the same gates on every push/PR (`.github/workflows/ci.yml`).

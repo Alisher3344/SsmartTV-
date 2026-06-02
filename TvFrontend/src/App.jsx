@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import MastersFab from './components/MastersFab';
 import Home from './pages/Home';
 import TVChannels from './pages/TVChannels';
 import Movies from './pages/Movies';
@@ -47,6 +48,7 @@ function App() {
           <Route path="/admin" element={<AdminPanel />} />
         </Routes>
         <Footer />
+        <MastersFab />
       </div>
     </Router>
   );
