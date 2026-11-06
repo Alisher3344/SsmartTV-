@@ -28,17 +28,17 @@ const Navbar = () => {
   const isActive = (path) => (path === '/' ? pathname === '/' : pathname.startsWith(path));
 
   return (
-    <nav className="bg-dark-lighter/80 border-b border-white/5 sticky top-0 z-50 backdrop-blur-xl">
+    <nav className="bg-ink-900/70 border-b border-white/[0.06] sticky top-0 z-50 backdrop-blur-xl">
       <div className="page-container">
         <div className="flex items-center justify-between h-16 sm:h-20 lg:h-24">
           {/* Logo */}
           <div className="flex items-center flex-shrink-0">
-            <Link to="/" aria-label="Smart TV">
+            <Link to="/" aria-label="SSMART TV">
               <img
                 src="/logo.png"
-                alt="Smart TV"
+                alt="SSMART TV"
                 className="h-12 sm:h-16 lg:h-20 w-auto object-contain cursor-pointer transition-transform duration-300 hover:scale-105"
-                style={{ filter: 'brightness(0) invert(1) drop-shadow(0 0 10px rgba(113, 0, 135, 0.5))' }}
+                style={{ filter: 'brightness(0) invert(1) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6))' }}
               />
             </Link>
           </div>
@@ -50,9 +50,9 @@ const Navbar = () => {
                 <Link
                   key={item.key}
                   to={item.path}
-                  className={`navbar-link text-base relative py-1 ${
+                  className={`navbar-link relative py-1 ${
                     isActive(item.path)
-                      ? "text-primary after:absolute after:-bottom-0.5 after:left-0 after:right-0 after:h-0.5 after:rounded-full after:bg-primary after:shadow-glow-sm"
+                      ? "text-white after:absolute after:-bottom-0.5 after:left-0 after:right-0 after:h-0.5 after:rounded-full after:bg-gold"
                       : ''
                   }`}
                 >
@@ -73,20 +73,20 @@ const Navbar = () => {
             </button>
 
             {/* Language Switcher */}
-            <div className="flex items-center gap-1 bg-dark-card px-2 py-1 rounded-lg">
-              <Globe size={16} className="hidden xs:block text-gray-400" />
+            <div className="flex items-center gap-1 bg-white/5 px-2 py-1 rounded-full">
+              <Globe size={16} className="hidden xs:block text-white/40" />
               <button
                 onClick={() => changeLanguage('uz')}
-                className={`px-2 py-1 text-xs rounded transition-colors active:scale-95 ${
-                  language === 'uz' ? 'bg-primary text-white' : 'text-gray-400 hover:text-white'
+                className={`px-2.5 py-1 text-xs font-medium rounded-full transition-colors active:scale-95 ${
+                  language === 'uz' ? 'bg-gold text-ink' : 'text-white/50 hover:text-white'
                 }`}
               >
                 UZ
               </button>
               <button
                 onClick={() => changeLanguage('ru')}
-                className={`px-2 py-1 text-xs rounded transition-colors active:scale-95 ${
-                  language === 'ru' ? 'bg-primary text-white' : 'text-gray-400 hover:text-white'
+                className={`px-2.5 py-1 text-xs font-medium rounded-full transition-colors active:scale-95 ${
+                  language === 'ru' ? 'bg-gold text-ink' : 'text-white/50 hover:text-white'
                 }`}
               >
                 RU
@@ -105,7 +105,7 @@ const Navbar = () => {
             <button
               onClick={() => navigate('/admin')}
               title="Admin panel"
-              className="flex items-center gap-2 bg-dark-card px-3 py-2 rounded-lg hover:bg-gray-800 transition-colors active:scale-95 min-h-touch"
+              className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-full hover:bg-white/10 transition-colors active:scale-95 min-h-touch"
             >
               <User size={18} />
               <span className="text-sm hidden sm:inline">SS</span>
@@ -125,16 +125,16 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden bg-dark-card border-t border-white/5 animate-fade-up">
+        <div className="lg:hidden bg-ink-800 border-t border-white/5 animate-fade-up">
           <div className="px-4 py-2">
             {navItems.map((item) => (
               <Link
                 key={item.key}
                 to={item.path}
-                className={`flex items-center min-h-touch py-3 px-2 rounded-lg text-base font-medium transition-colors ${
+                className={`flex items-center min-h-touch py-3 px-3 rounded-lg text-base font-medium transition-colors ${
                   isActive(item.path)
-                    ? 'text-primary bg-primary/10'
-                    : 'text-white hover:text-primary hover:bg-white/5'
+                    ? 'text-gold bg-gold/10'
+                    : 'text-white/80 hover:text-white hover:bg-white/5'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >

@@ -353,9 +353,19 @@ const TVChannels = () => {
         )}
         {!loading && filteredChannels.length === 0 && (
           <div className="text-center py-16">
-            <p className="text-gray-400 text-lg">
-              {currentLang === 'uz' ? 'Kanallar topilmadi' : 'Каналы не найдены'}
-            </p>
+            {channels.length === 0 ? (
+              <>
+                <span className="inline-block px-3 py-1 mb-3 rounded-full bg-primary/20 text-primary text-xs font-semibold uppercase tracking-wide">
+                  {t('comingSoon.badge')}
+                </span>
+                <h2 className="text-2xl font-bold mb-2">{t('comingSoon.title')}</h2>
+                <p className="text-gray-400 max-w-md mx-auto">{t('comingSoon.subtitle')}</p>
+              </>
+            ) : (
+              <p className="text-gray-400 text-lg">
+                {currentLang === 'uz' ? 'Kanallar topilmadi' : 'Каналы не найдены'}
+              </p>
+            )}
           </div>
         )}
       </div>

@@ -18,37 +18,36 @@ const ComingSoon = ({
 
   return (
     <div className={`flex items-center justify-center px-4 ${className}`}>
-      {/* Orqa fon nuri */}
-      <div className="relative w-full max-w-lg">
-        <div className="pointer-events-none absolute -inset-10 bg-radial-glow" aria-hidden="true" />
+      <div className="w-full max-w-xl text-center">
+        {/* Nozik ikonka — fonsiz, float yo'q */}
+        <Icon
+          size={30}
+          strokeWidth={1.25}
+          className="mx-auto mb-5 text-gold/60 reveal reveal-1"
+          aria-hidden="true"
+        />
 
-        <div className="glass-card relative rounded-2xl px-6 py-12 sm:px-12 sm:py-16 text-center">
-          {/* Icon badge */}
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/30 to-primary/5 ring-1 ring-primary/30 animate-float">
-            <Icon size={38} className="text-primary-light" strokeWidth={1.6} />
-          </div>
+        {/* Eyebrow */}
+        <p className="eyebrow justify-center reveal reveal-1">{t('comingSoon.badge')}</p>
 
-          {/* Badge pill */}
-          <span className="mb-4 inline-block rounded-full bg-primary/15 px-3 py-1 text-xs font-medium uppercase tracking-widest text-primary-light">
-            {t('comingSoon.badge')}
-          </span>
+        {/* Title — yirik serif */}
+        <h1 className="font-display text-fluid-display font-semibold gradient-text reveal reveal-2">
+          {title || t('comingSoon.title')}
+        </h1>
 
-          {/* Title */}
-          <h1 className="gradient-text text-2xl font-bold sm:text-3xl">
-            {title || t('comingSoon.title')}
-          </h1>
+        {/* Oltin chiziq divider */}
+        <div className="mx-auto my-6 h-px w-16 bg-gold/50 reveal reveal-2" />
 
-          {/* Subtitle */}
-          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-gray-400 sm:text-base">
-            {subtitle || t('comingSoon.subtitle')}
-          </p>
+        {/* Subtitle */}
+        <p className="mx-auto max-w-md text-sm leading-relaxed text-white/55 sm:text-base reveal reveal-3">
+          {subtitle || t('comingSoon.subtitle')}
+        </p>
 
-          {showBackButton && (
-            <Link to="/" className="btn-primary mt-8 w-full sm:w-auto">
-              {t('comingSoon.back')}
-            </Link>
-          )}
-        </div>
+        {showBackButton && (
+          <Link to="/" className="btn-outline mt-8 reveal reveal-4">
+            {t('comingSoon.back')}
+          </Link>
+        )}
       </div>
     </div>
   );

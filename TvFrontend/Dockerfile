@@ -7,8 +7,8 @@ RUN npm ci
 
 COPY . .
 
-# Same-origin: API ssmart-tv.ssmart.uz/api orqali (asosiy nginx /api -> tv-api)
-ARG VITE_API_URL=https://ssmart-tv.ssmart.uz
+# Same-origin: API tv.ssmart.uz/api orqali (asosiy nginx /api -> tv-api)
+ARG VITE_API_URL=https://tv.ssmart.uz
 ENV VITE_API_URL=$VITE_API_URL
 
 RUN npm run build

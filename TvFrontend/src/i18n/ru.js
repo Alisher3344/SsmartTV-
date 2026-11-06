@@ -13,15 +13,18 @@ export const ru = {
     
     // Hero section
     hero: {
+      live: "Сегодня в эфире",
       watch: "Смотреть",
       share: "Поделиться",
-      more: "Продолжить просмотр",
+      more: "Подробнее",
     },
-    
+
     // Sections
     sections: {
       channels: "Телеканалы",
+      channelsKicker: "Прямой эфир",
       cinemas: "Кинотеатры",
+      cinemasKicker: "Онлайн-кинотеатры",
       premieres: "Самые ожидаемые премьеры",
       dubbed: "Сериалы с узбекским дубляжом",
       viewAll: "Показать больше",

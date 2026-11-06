@@ -67,30 +67,50 @@ const ChannelsSection = () => {
     }
   };
   
-  // Yuklanib bo'lgach kanal bo'lmasa — bo'limni ko'rsatmaymiz
-  if (loaded && channels.length === 0) return null;
+  // Yuklanib bo'lgach kanal bo'lmasa — "Tez kunda" placeholderini ko'rsatamiz
+  if (loaded && channels.length === 0) {
+    return (
+      <div className="page-container py-16">
+        <div className="flex items-end gap-4 mb-7">
+          <span className="section-index hidden sm:block">01</span>
+          <div>
+            <p className="eyebrow">{t('sections.channelsKicker')}</p>
+            <h2 className="section-title mb-0">{t('sections.channels')}</h2>
+          </div>
+        </div>
+        <div className="rounded-2xl ring-1 ring-white/10 bg-white/5 py-14 px-6 text-center">
+          <span className="inline-block px-3 py-1 mb-3 rounded-full bg-gold/20 text-gold text-xs font-semibold uppercase tracking-wider">
+            {t('comingSoon.badge')}
+          </span>
+          <h3 className="text-2xl font-bold mb-2">{t('comingSoon.title')}</h3>
+          <p className="text-white/60 max-w-md mx-auto">{t('comingSoon.subtitle')}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="page-container py-12">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="section-title">
-          <span className="gradient-text">{t('sections.channels')}</span>
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" className="text-primary">
-            <path d="M4 2l4 4-4 4" stroke="currentColor" strokeWidth="2" fill="none"/>
-          </svg>
-        </h2>
+    <div className="page-container py-16">
+      <div className="flex items-end justify-between mb-7">
+        <div className="flex items-end gap-4">
+          <span className="section-index hidden sm:block">01</span>
+          <div>
+            <p className="eyebrow">{t('sections.channelsKicker')}</p>
+            <h2 className="section-title mb-0">{t('sections.channels')}</h2>
+          </div>
+        </div>
 
         <div className="flex gap-2">
           <button
             onClick={() => scroll('left')}
-            className="tap-target bg-dark-card hover:bg-primary rounded-lg transition-colors active:scale-95"
+            className="tap-target bg-white/5 ring-1 ring-white/10 hover:bg-gold hover:text-ink rounded-full transition-colors active:scale-95"
             aria-label="Chapga"
           >
             <ChevronLeft size={22} />
           </button>
           <button
             onClick={() => scroll('right')}
-            className="tap-target bg-dark-card hover:bg-primary rounded-lg transition-colors active:scale-95"
+            className="tap-target bg-white/5 ring-1 ring-white/10 hover:bg-gold hover:text-ink rounded-full transition-colors active:scale-95"
             aria-label="O'ngga"
           >
             <ChevronRight size={22} />
@@ -109,7 +129,7 @@ const ChannelsSection = () => {
         {channels.map((channel) => (
           <div
             key={channel.id}
-            className="relative flex-shrink-0 w-32 h-20 bg-dark-card rounded-lg flex items-center justify-center glow-hover hover:bg-gray-800 cursor-pointer overflow-hidden"
+            className="relative flex-shrink-0 w-32 h-20 bg-ink-700 ring-1 ring-white/5 rounded-xl flex items-center justify-center hover:ring-gold/40 hover:-translate-y-1 transition duration-300 cursor-pointer overflow-hidden"
             onClick={() => {
               if (channel.videoUrl) {
                 setSelectedChannel(channel);
@@ -118,7 +138,7 @@ const ChannelsSection = () => {
             }}
           >
             {channel.country && (
-              <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded-full bg-black/60 text-[9px] font-medium text-gray-200">
+              <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded-full bg-ink/80 ring-1 ring-white/10 text-[9px] font-medium uppercase tracking-wider text-white/80">
                 {currentLang === 'ru'
                   ? channel.country.name_ru
                   : channel.country.name_uz}

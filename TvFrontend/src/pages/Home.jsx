@@ -10,17 +10,23 @@ const Home = () => {
   return (
     <div>
       <HeroSection />
-      <ChannelsSection />
+
+      <div className="reveal reveal-1">
+        <ChannelsSection />
+      </div>
 
       {/* Filmlar va seriallar — tez kunda */}
-      <section className="page-container py-12">
-        <h2 className="section-title">
-          <span className="gradient-text">{t('sections.comingSoonRow')}</span>
-        </h2>
+      <section className="page-container py-16 reveal reveal-2">
+        <div className="flex items-end gap-4 mb-7">
+          <span className="section-index hidden sm:block">03</span>
+          <h2 className="section-title mb-0">{t('sections.comingSoonRow')}</h2>
+        </div>
         <ComingSoon className="py-8" showBackButton={false} />
       </section>
 
-      <CinemasSection />
+      <div className="reveal reveal-3">
+        <CinemasSection />
+      </div>
     </div>
   );
 };

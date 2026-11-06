@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Play } from 'lucide-react';
 import apiClient from '../api/client';
 
 const ROTATE_MS = 6000;
@@ -8,7 +9,7 @@ const ROTATE_MS = 6000;
 // ssmart-dashboard.ssmart.uz/tv-admins dan boshqariladi (TV backend /api/v1/carousel).
 // Faol slayd bo'lmasa — hech narsa ko'rsatilmaydi (bo'sh joy egallamaydi).
 const HeroSection = () => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const lang = i18n.language === 'ru' ? 'ru' : 'uz';
 
   const [slides, setSlides] = useState([]);
@@ -44,7 +45,7 @@ const HeroSection = () => {
 
   // Yuklanmaguncha — skeleton; faol slayd bo'lmasa — hech narsa
   if (!loaded) {
-    return <div className="skeleton h-[56vh] min-h-[360px] sm:h-[60vh] sm:min-h-[440px]" />;
+    return <div className="skeleton h-[68vh] min-h-[440px] sm:h-[78vh] sm:min-h-[560px]" />;
   }
   if (slides.length === 0) return null;
 
@@ -52,24 +53,54 @@ const HeroSection = () => {
   const title =
     (lang === 'ru' ? slide.title_ru : slide.title_uz) || slide.title_uz || slide.title_ru || '';
 
-  const body = (
-    <div
-      className="relative h-[56vh] min-h-[360px] sm:h-[60vh] sm:min-h-[440px] bg-cover bg-center"
-      style={{ backgroundImage: `url(${slide.image})` }}
-    >
-      <div className="absolute inset-0 hero-gradient"></div>
+  return (
+    <section className="relative h-[68vh] min-h-[440px] sm:h-[78vh] sm:min-h-[560px] overflow-hidden">
+      {/* Fon — sekin ken-burns zoom (har slayd almashganda qayta ishga tushadi) */}
+      <div
+        key={slide.id}
+        className="absolute inset-0 bg-cover bg-center animate-kenburns"
+        style={{ backgroundImage: `url(${slide.image})` }}
+      />
 
-      {title && (
-        <div className="relative page-container h-full flex items-end pb-12 sm:pb-16">
-          <h1 className="text-fluid-hero font-bold text-white max-w-2xl tracking-wide animate-fade-up drop-shadow-lg">
-            {title}
-          </h1>
+      {/* Asimmetrik chap-og'ir scrim (editorial matn o'qilishi uchun) + pastki fade */}
+      <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/35 to-transparent" />
+      <div className="absolute inset-0 hero-gradient" />
+
+      {/* Editorial kontent — chap ustun, pastga tayanadi */}
+      <div className="relative page-container h-full flex items-end pb-12 sm:pb-20">
+        <div className="max-w-2xl">
+          <p className="eyebrow reveal reveal-1">{t('hero.live')}</p>
+
+          {title && (
+            <h1 className="font-display text-fluid-hero font-semibold text-white reveal reveal-2 drop-shadow-[0_2px_20px_rgba(0,0,0,0.6)]">
+              {title}
+            </h1>
+          )}
+
+          <div className="mt-7 flex flex-wrap items-center gap-3 reveal reveal-3">
+            {slide.link_url ? (
+              <a href={slide.link_url} className="btn-primary">
+                <Play size={18} fill="currentColor" />
+                {t('hero.watch')}
+              </a>
+            ) : (
+              <span className="btn-primary">
+                <Play size={18} fill="currentColor" />
+                {t('hero.watch')}
+              </span>
+            )}
+            {slide.link_url && (
+              <a href={slide.link_url} className="btn-outline">
+                {t('hero.more')}
+              </a>
+            )}
+          </div>
         </div>
-      )}
+      </div>
 
       {/* Slayd indikatorlari */}
       {slides.length > 1 && (
-        <div className="absolute bottom-3 right-4 sm:right-8 flex gap-1">
+        <div className="absolute bottom-4 right-4 sm:right-8 flex gap-1">
           {slides.map((s, i) => (
             <button
               key={s.id}
@@ -81,23 +112,15 @@ const HeroSection = () => {
               className="flex h-6 items-center px-1"
             >
               <span
-                className={`block h-2 rounded-full transition-all ${
-                  i === idx ? 'w-6 bg-primary' : 'w-2 bg-gray-500 hover:bg-gray-300'
+                className={`block h-1.5 rounded-full transition-all ${
+                  i === idx ? 'w-7 bg-gold' : 'w-2 bg-white/30 hover:bg-white/60'
                 }`}
               />
             </button>
           ))}
         </div>
       )}
-    </div>
-  );
-
-  return slide.link_url ? (
-    <a href={slide.link_url} className="block">
-      {body}
-    </a>
-  ) : (
-    body
+    </section>
   );
 };
 

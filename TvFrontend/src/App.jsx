@@ -13,6 +13,7 @@ import Agreement from './pages/Agreement';
 import Privacy from './pages/Privacy';
 import MovieDetail from './pages/MovieDetail';
 import AdminPanel from './pages/AdminPanel';
+import ComingSoon from './components/ComingSoon';
 import { useStore } from './store/useStore';
 import './i18n/config';
 
@@ -33,13 +34,18 @@ function App() {
   
   return (
     <Router>
-      <div className="min-h-screen bg-dark text-white">
+      <div className="relative z-10 min-h-screen bg-dark text-white">
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/channels" element={<TVChannels />} />
-          <Route path="/sport" element={<TVChannels />} />
-          <Route path="/movies" element={<Movies />} />
+          {/* --- VAQTINCHA: Tez kunda (asl sahifalar commentga olindi; qaytarish uchun commentni oching) --- */}
+          <Route path="/channels" element={<ComingSoon />} />
+          {/* <Route path="/channels" element={<TVChannels />} /> */}
+          <Route path="/sport" element={<ComingSoon />} />
+          {/* <Route path="/sport" element={<TVChannels />} /> */}
+          <Route path="/movies" element={<ComingSoon />} />
+          {/* <Route path="/movies" element={<Movies />} /> */}
+          {/* --- VAQTINCHA tugadi --- */}
           <Route path="/movie/:id" element={<MovieDetail />} />
           <Route path="/series" element={<Series />} />
           <Route path="/kids" element={<Kids />} />

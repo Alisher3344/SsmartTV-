@@ -8,44 +8,93 @@
   }
 
   body {
-    @apply bg-dark text-white;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    @apply bg-ink text-white;
+    font-family: 'Manrope', system-ui, -apple-system, sans-serif;
     margin: 0;
     padding: 0;
     /* Kichik ekranlarda gorizontal scroll bo'lmasin */
     overflow-x: hidden;
   }
 
-  /* Klaviatura bilan harakatlanishda ko'rinadigan focus ring */
+  /* Kino atmosferasi: film-grain teksturasi + vignette.
+     Ikkalasi ham fixed va pointer-events:none — tegishni bloklamaydi, scroll'da repaint qilmaydi. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: theme('backgroundImage.film-grain');
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: theme('backgroundImage.vignette');
+  }
+
+  /* Klaviatura bilan harakatlanishda ko'rinadigan focus ring (oltin) */
   *:focus-visible {
-    @apply outline-none ring-2 ring-primary/60 ring-offset-2 ring-offset-dark rounded;
+    @apply outline-none ring-2 ring-gold/70 ring-offset-2 ring-offset-ink rounded;
   }
 }
 
 @layer components {
+  /* Asosiy CTA — to'liq oltin, ink matn, pill, glow yo'q */
   .btn-primary {
-    @apply bg-primary hover:bg-primary-dark text-white font-semibold px-5 py-2.5 rounded-lg
-      min-h-touch inline-flex items-center justify-center gap-2
-      shadow-glow-sm hover:shadow-glow active:scale-95
-      transition-all duration-300;
+    @apply bg-gold hover:bg-gold-light text-ink font-semibold tracking-wide
+      px-6 py-3 rounded-full min-h-touch inline-flex items-center justify-center gap-2
+      shadow-glow-sm active:scale-[0.98] transition-all duration-300;
   }
 
+  /* Editorial ghost CTA */
+  .btn-outline {
+    @apply border border-white/25 hover:border-gold hover:text-gold text-white/90
+      font-medium tracking-wide px-6 py-3 rounded-full min-h-touch
+      inline-flex items-center justify-center gap-2 transition-colors duration-300;
+  }
+
+  /* Editorial karta — glow yo'q, nozik ring + lift */
   .card {
-    @apply bg-dark-card rounded-xl overflow-hidden cursor-pointer
-      shadow-card will-change-transform
-      transition-all duration-300 sm:hover:scale-105 hover:shadow-glow;
+    @apply bg-ink-700 rounded-xl overflow-hidden cursor-pointer shadow-card
+      ring-1 ring-white/5 will-change-transform
+      transition duration-500 hover:ring-gold/40 hover:-translate-y-1;
   }
 
+  /* Qayta ishlatilgan: glow o'rniga nozik chekka yorqinligi */
+  .glow-hover {
+    @apply transition duration-300 ring-1 ring-white/5 hover:ring-gold/40;
+  }
+
+  /* Navbar linklari — binafsha text-shadow yo'q, oltin hover */
   .navbar-link {
-    @apply text-white hover:text-primary transition-colors duration-200 cursor-pointer text-sm font-medium;
+    @apply font-sans text-sm font-medium tracking-wide text-white/75
+      hover:text-white transition-colors duration-200 cursor-pointer;
   }
 
-  .navbar-link:hover {
-    text-shadow: 0 0 8px rgba(113, 0, 135, 0.6);
+  /* Oltin uppercase label (bo'lim sarlavhalari ustida) */
+  .eyebrow {
+    @apply text-eyebrow font-sans font-medium uppercase text-gold/90 flex items-center gap-3 mb-3;
   }
 
+  .eyebrow::before {
+    content: '';
+    @apply h-px w-8 bg-gold/60 inline-block;
+  }
+
+  /* Bo'lim sarlavhasi — endi serif display */
   .section-title {
-    @apply text-fluid-h2 font-bold mb-6 flex items-center gap-2;
+    @apply font-display text-fluid-h2 font-semibold text-white mb-7 tracking-tight;
+  }
+
+  /* Katta xira serif raqam — jurnal usuli */
+  .section-index {
+    @apply font-display text-5xl sm:text-6xl font-semibold leading-none text-white/10 select-none;
   }
 
   /* Sahifa konteyneri — bitta manbadan kenglik/padding */
@@ -58,28 +107,33 @@
     @apply min-h-touch min-w-touch flex items-center justify-center;
   }
 
-  /* Glassmorphism karta */
+  /* Glassmorphism karta (saqlanadi, vazminroq) */
   .glass-card {
-    @apply bg-dark-card/70 backdrop-blur-xl border border-white/5 shadow-card;
+    @apply bg-ink-800/70 backdrop-blur-xl border border-white/5 shadow-card;
   }
 
   /* Gradient matn */
   .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400;
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-white via-white to-white/55;
   }
 
   .gradient-text-brand {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-light to-secondary;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-light to-gold;
   }
 
-  /* Hover'da glow effekti */
-  .glow-hover {
-    @apply transition-all duration-300 hover:shadow-glow;
+  /* Sahnalashtirilgan page-load reveal (CSS-only) */
+  .reveal {
+    animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
+  .reveal-1 { animation-delay: 0.05s; }
+  .reveal-2 { animation-delay: 0.15s; }
+  .reveal-3 { animation-delay: 0.28s; }
+  .reveal-4 { animation-delay: 0.42s; }
+  .reveal-5 { animation-delay: 0.58s; }
 
   /* Skeleton loader (shimmer) */
   .skeleton {
-    @apply relative overflow-hidden bg-dark-card;
+    @apply relative overflow-hidden bg-ink-700;
   }
 
   .skeleton::after {
@@ -101,37 +155,27 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #141414;
+  background: #0b0b0f;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(#444, #555);
+  background: #2a2832;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(#555, #666);
+  background: #B8862A;
 }
 
-/* Custom animations */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-slide-in {
-  animation: slideIn 0.5s ease-out;
-}
-
-/* Hero gradient */
+/* Hero pastki fade — kuchliroq, ink-asosli */
 .hero-gradient {
-  background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.55) 55%, rgba(10,10,10,0.95));
+  background: linear-gradient(
+    to top,
+    #08080a 2%,
+    rgba(8, 8, 10, 0.65) 35%,
+    rgba(8, 8, 10, 0.15) 70%,
+    transparent 100%
+  );
 }
 
 /* Hide scrollbar for carousel */
@@ -142,4 +186,22 @@
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Harakatni kamaytirish — reveal/kenburns/grain o'chadi */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-1,
+  .reveal-2,
+  .reveal-3,
+  .reveal-4,
+  .reveal-5,
+  .animate-fade-up,
+  .animate-kenburns,
+  .animate-float {
+    animation: none !important;
+  }
+  body::before {
+    display: none;
+  }
 }

@@ -13,15 +13,18 @@ export const uz = {
     
     // Hero section
     hero: {
+      live: "Bugun efirda",
       watch: "Ko'rish",
       share: "Ulashish",
-      more: "Ko'rishda davom etish",
+      more: "Batafsil",
     },
-    
+
     // Sections
     sections: {
       channels: "Telekanallar",
+      channelsKicker: "Jonli efir",
       cinemas: "Kinoteatrlar",
+      cinemasKicker: "Onlayn kinoteatrlar",
       premieres: "Eng kutilgan premyeralar",
       dubbed: "O'zbek dublyajidagi seriallar",
       viewAll: "Ko'proq ko'rsatish",
